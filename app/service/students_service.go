@@ -5,17 +5,27 @@ import (
 	"project-uas/app/model"
 	"project-uas/app/repository"
 	"project-uas/database"
-	"strings" // Import 'strings' untuk error handling
+	"strings" 
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	// "project-uas/helper" // Tidak perlu lagi untuk create student
+	
 )
 
-// =============================
-// GET STUDENT BY USER ID
-// (Asumsi :id di URL adalah user_id)
-// =============================
+func GetAllStudents(c *fiber.Ctx) error {
+	students, err := repository.GetAllStudents(database.DB)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false, "message": "Gagal mengambil data students",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"data":    students,
+	})
+}
+
 func GetStudentByUserID(c *fiber.Ctx) error {
 	userID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -46,20 +56,39 @@ func GetStudentByUserID(c *fiber.Ctx) error {
 		"full_name":      user.FullName,
 		"role_id":        user.RoleID,
 		"is_active":      user.IsActive,
-		"student_id":     student.StudentID,     // Diperbaiki
-		"program_study":  student.ProgramStudy,  // Diperbaiki
-		"academic_year":  student.AcademicYear,  // Diperbaiki
-		"advisor_id":     student.AdvisorID,     // Ditambahkan
-		"student_db_id":  student.ID,            // Ditambahkan
+		"student_id":     student.StudentID,     
+		"program_study":  student.ProgramStudy,  
+		"academic_year":  student.AcademicYear,  
+		"advisor_id":     student.AdvisorID,     
+		"student_db_id":  student.ID,            
 	}
 
 	return c.JSON(fiber.Map{"success": true, "data": response})
 }
 
-// =============================
-// CREATE STUDENT (BUKAN CreateStudentUser)
+func GetStudentAchievements(c *fiber.Ctx) error {
+	studentID, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false, "message": "ID student tidak valid",
+		})
+	}
+
+	achievements, err := repository.GetAchievementsByStudentID(database.DB, studentID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false, "message": "Gagal mengambil data achievements",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"data":    achievements,
+	})
+}
+
+// CREATE STUDENT 
 // HANYA membuat data student dan menautkannya ke user_id yang ada
-// =============================
 func CreateStudent(c *fiber.Ctx) error {
 	// 1. Menggunakan struct request yang baru
 	var req model.CreateStudentRequest
@@ -76,15 +105,14 @@ func CreateStudent(c *fiber.Ctx) error {
 		})
 	}
 
-	// 3. SEMUA kode hash password & CreateUser DIHAPUS
 
-	// 4. Siapkan struct model.Student untuk disimpan
+	// 3. Siapkan struct model.Student untuk disimpan
 	student := &model.Student{
 		UserID:       req.UserID,
 		StudentID:    req.StudentID,
 		ProgramStudy: req.ProgramStudy,
 		AcademicYear: req.AcademicYear,
-		AdvisorID:    req.AdvisorID, // Akan jadi nil jika tidak ada di JSON
+		AdvisorID:    req.AdvisorID, 
 	}
 
 	// 5. Panggil repository HANYA untuk CreateStudent
@@ -109,10 +137,40 @@ func CreateStudent(c *fiber.Ctx) error {
 	})
 }
 
-// =============================
+func UpdateStudentAdvisor(c *fiber.Ctx) error {
+	studentID, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false, "message": "ID student tidak valid",
+		})
+	}
+
+	var req model.UpdateAdvisorRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false, "message": "Request body tidak valid",
+		})
+	}
+
+	// Boleh null → untuk menghapus advisor
+	err = repository.UpdateAdvisor(database.DB, studentID, req.AdvisorID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false, "message": "Gagal mengubah advisor student",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"message": "Advisor student berhasil diperbarui",
+		"data": fiber.Map{
+			"student_id": studentID,
+			"advisor_id": req.AdvisorID,
+		},
+	})
+}
+
 // UPDATE STUDENT
-// (Asumsi :id di URL adalah user_id)
-// =============================
 func UpdateStudent(c *fiber.Ctx) error {
 	userID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -121,7 +179,7 @@ func UpdateStudent(c *fiber.Ctx) error {
 		})
 	}
 
-	// 1. Menggunakan struct request yang baru
+	// 1. Menggunakan struct request 
 	var req model.UpdateStudentRequest
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

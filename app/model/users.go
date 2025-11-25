@@ -10,7 +10,7 @@ type User struct {
 	ID           uuid.UUID `json:"id"`
 	Username     string    `json:"username"`
 	Email        string    `json:"email"`
-	PasswordHash string    `json:"-"` // Sembunyikan dari JSON response
+	PasswordHash string    `json:"-"` 
 	FullName     string    `json:"full_name"`
 	RoleID       uuid.UUID `json:"role_id"`
 	IsActive     bool      `json:"is_active"`
@@ -31,5 +31,5 @@ type UpdateUserRequest struct {
 	Email    string    `json:"email"`
 	FullName string    `json:"full_name"`
 	RoleID   uuid.UUID `json:"role_id"`
-	IsActive *bool     `json:"is_active"` // Pointer untuk membedakan false dan not provided
+	IsActive *bool     `json:"is_active"` 
 }

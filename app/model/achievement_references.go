@@ -29,7 +29,7 @@ type AchievementReference struct {
 	UpdatedAt            time.Time          `json:"updated_at"`
 }
 
-// --- STRUCT REQUEST BARU UNTUK CREATE (SUBMIT) ---
+//  STRUCT REQUEST BARU UNTUK CREATE (SUBMIT) 
 // Ini adalah data yang dikirim Mahasiswa saat submit prestasi
 type CreateAchievementReferenceRequest struct {
 	StudentID          uuid.UUID `json:"student_id"`

@@ -1,32 +1,30 @@
 package model
 
 import (
-	// "time" // Dihapus karena tidak ada 'created_at' di tabel
+
 	"github.com/google/uuid"
 )
 
-// Permission struct ini sekarang mencerminkan tabel 'permissions' Anda
 type Permission struct {
 	ID          uuid.UUID `json:"id"`
 	Name        string    `json:"name"`
-	Resource    string    `json:"resource"`    // <-- DITAMBAHKAN (sesuai tabel)
-	Action      string    `json:"action"`      // <-- DITAMBAHKAN (sesuai tabel)
+	Resource    string    `json:"resource"`    
+	Action      string    `json:"action"`      
 	Description *string   `json:"description"`
-	// CreatedAt   time.Time `json:"created_at"` // <-- DIHAPUS (tidak ada di tabel)
 }
 
-// Struct request Create disesuaikan
+// Struct request Create 
 type CreatePermissionRequest struct {
 	Name        string  `json:"name"`
-	Resource    string  `json:"resource"`    // <-- DITAMBAHKAN
-	Action      string  `json:"action"`      // <-- DITAMBAHKAN
+	Resource    string  `json:"resource"`    
+	Action      string  `json:"action"`      
 	Description *string `json:"description"`
 }
 
-// Struct request Update disesuaikan
+// Struct request Update 
 type UpdatePermissionRequest struct {
 	Name        string  `json:"name"`
-	Resource    string  `json:"resource"`    // <-- DITAMBAHKAN
-	Action      string  `json:"action"`      // <-- DITAMBAHKAN
+	Resource    string  `json:"resource"`    
+	Action      string  `json:"action"`      
 	Description *string `json:"description"`
 }

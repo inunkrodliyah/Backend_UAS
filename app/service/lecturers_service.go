@@ -5,11 +5,26 @@ import (
 	"project-uas/app/model"
 	"project-uas/app/repository"
 	"project-uas/database"
-	"strings" // <-- 1. IMPORT PACKAGE 'strings'
+	"strings" 
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
+
+func GetAllLecturers(c *fiber.Ctx) error {
+	lecturers, err := repository.GetAllLecturers(database.DB)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Gagal mengambil data lecturers",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"data":    lecturers,
+	})
+}
 
 // GetLecturerByUserID
 // (Fungsi ini sudah benar, tidak ada perubahan)
@@ -44,8 +59,39 @@ func GetLecturerByUserID(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"success": true, "data": response})
 }
 
+func GetLecturerAdvisees(c *fiber.Ctx) error {
+	lecturerID, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "ID lecturer tidak valid",
+		})
+	}
+
+	// Pastikan lecturer ada
+	_, err = repository.GetLecturerByID(database.DB, lecturerID)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "Lecturer tidak ditemukan",
+		})
+	}
+
+	advisees, err := repository.GetAdviseesByLecturerID(database.DB, lecturerID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Gagal mengambil advisees",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"data":    advisees,
+	})
+}
+
 // CreateLecturer
-// (Fungsi ini diperbaiki)
 func CreateLecturer(c *fiber.Ctx) error {
 	var req model.CreateLecturerRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -67,15 +113,11 @@ func CreateLecturer(c *fiber.Ctx) error {
 
 	if err := repository.CreateLecturer(database.DB, lecturer); err != nil {
 		log.Println("Error membuat lecturer:", err)
-
-		// --- 2. PERBAIKAN DI SINI ---
-		// Diubah dari err.Error().Contains(...) menjadi strings.Contains(err.Error(), ...)
 		if strings.Contains(err.Error(), "duplicate key") {
 			return c.Status(fiber.StatusConflict).JSON(fiber.Map{
 				"success": false, "message": "Gagal: User ini sudah terdaftar sebagai dosen atau ID dosen sudah ada.", "error": err.Error(),
 			})
 		}
-		// --- AKHIR PERBAIKAN ---
 
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false, "message": "Gagal membuat data lecturer", "error": err.Error(),
@@ -90,7 +132,6 @@ func CreateLecturer(c *fiber.Ctx) error {
 }
 
 // UpdateLecturer
-// (Fungsi ini sudah benar, tidak ada perubahan)
 func UpdateLecturer(c *fiber.Ctx) error {
 	userID, err := uuid.Parse(c.Params("id"))
 	if err != nil {

@@ -10,8 +10,6 @@ import (
 	"github.com/google/uuid"
 )
 
-
-
 func GetAllUsers(c *fiber.Ctx) error {
 	users, err := repository.GetAllUsers(database.DB)
 	if err != nil {
@@ -126,4 +124,50 @@ func DeleteUser(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{"success": true, "message": "User berhasil dihapus"})
+}
+//yang bagian put id/role
+func UpdateUserRole(c *fiber.Ctx) error {
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false, "message": "ID tidak valid",
+		})
+	}
+
+	var req model.UpdateUserRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false, "message": "Request body tidak valid",
+		})
+	}
+
+	if req.RoleID == uuid.Nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false, "message": "role_id wajib diisi",
+		})
+	}
+
+	// Cek apakah user ada
+	_, err = repository.GetUserByID(database.DB, id)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false, "message": "User tidak ditemukan",
+		})
+	}
+
+	// Update role
+	if err := repository.UpdateUserRole(database.DB, id, req.RoleID); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false, "message": "Gagal mengubah role user", "error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"message": "Role user berhasil diubah",
+		"data": fiber.Map{
+			"id":      id,
+			"role_id": req.RoleID,
+		},
+	})
 }

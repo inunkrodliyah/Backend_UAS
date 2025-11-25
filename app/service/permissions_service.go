@@ -50,12 +50,12 @@ func CreatePermission(c *fiber.Ctx) error {
 	// 3. Model diisi dengan data baru
 	permission := &model.Permission{
 		Name:        req.Name,
-		Resource:    req.Resource,    // <-- DITAMBAHKAN
-		Action:      req.Action,      // <-- DITAMBAHKAN
+		Resource:    req.Resource,    
+		Action:      req.Action,      
 		Description: req.Description,
 	}
 
-	// 4. Panggil repository (yang sudah diperbarui)
+	// 4. Panggil repository 
 	if err := repository.CreatePermission(database.DB, permission); err != nil {
 		// Cek error duplikat 'name'
 		if strings.Contains(err.Error(), "duplicate key") {
@@ -77,7 +77,7 @@ func UpdatePermission(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "ID tidak valid"})
 	}
 
-	// 1. Menggunakan struct request yang baru
+	// 1. Menggunakan struct request 
 	var req model.UpdatePermissionRequest
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "Request body tidak valid"})
@@ -98,11 +98,11 @@ func UpdatePermission(c *fiber.Ctx) error {
 
 	// 4. Update data
 	permission.Name = req.Name
-	permission.Resource = req.Resource // <-- DITAMBAHKAN
-	permission.Action = req.Action     // <-- DITAMBAHKAN
+	permission.Resource = req.Resource 
+	permission.Action = req.Action     
 	permission.Description = req.Description
 
-	// 5. Panggil repository (yang sudah diperbarui)
+	// 5. Panggil repository 
 	if err := repository.UpdatePermission(database.DB, permission); err != nil {
 		// Cek error duplikat 'name'
 		if strings.Contains(err.Error(), "duplicate key") {

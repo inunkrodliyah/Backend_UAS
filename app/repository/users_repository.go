@@ -8,10 +8,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// Catatan: Transaksi (Tx) sangat direkomendasikan di sini,
-// terutama saat membuat User + Student/Lecturer.
-// Namun, untuk mengikuti pola, saya akan membuatnya terpisah.
-
 func GetAllUsers(db *sql.DB) ([]model.User, error) {
 	rows, err := db.Query(`
         SELECT id, username, email, full_name, role_id, is_active, created_at, updated_at
@@ -51,7 +47,7 @@ func CreateUser(db *sql.DB, u *model.User) error {
 	now := time.Now()
 	u.CreatedAt = now
 	u.UpdatedAt = now
-	u.IsActive = true // Default
+	u.IsActive = true 
 
 	_, err := db.Exec(`
         INSERT INTO users (id, username, email, password_hash, full_name, role_id, is_active, created_at, updated_at)
@@ -72,5 +68,15 @@ func UpdateUser(db *sql.DB, u *model.User) error {
 func DeleteUser(db *sql.DB, id uuid.UUID) error {
 	// Menghapus user akan cascade ke student/lecturer jika FK di-setting ON DELETE CASCADE
 	_, err := db.Exec("DELETE FROM users WHERE id = $1", id)
+	return err
+}
+
+// --- FUNGSI BARU DITAMBAHKAN DI SINI ---
+// Fungsi ini hanya mengupdate role_id dan updated_at
+func UpdateUserRole(db *sql.DB, id uuid.UUID, roleID uuid.UUID) error {
+	_, err := db.Exec(`
+        UPDATE users SET role_id = $1, updated_at = $2
+        WHERE id = $3
+    `, roleID, time.Now(), id)
 	return err
 }

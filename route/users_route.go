@@ -13,5 +13,6 @@ func SetupUserRoutes(api fiber.Router) {
 	users.Get("/:id", service.GetUserByID)
 	users.Post("/", service.CreateUser) // Ini user general
 	users.Put("/:id", service.UpdateUser)
+	users.Put("/:id/role", service.UpdateUserRole)
 	users.Delete("/:id", service.DeleteUser)
 }
