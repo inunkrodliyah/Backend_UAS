@@ -1,0 +1,129 @@
+package service
+
+import (
+	"project-uas/app/model"
+	"project-uas/app/repository"
+	"project-uas/database"
+	"project-uas/helper"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
+)
+
+
+
+func GetAllUsers(c *fiber.Ctx) error {
+	users, err := repository.GetAllUsers(database.DB)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false, "message": "Gagal mengambil data users", "error": err.Error(),
+		})
+	}
+	return c.JSON(fiber.Map{"success": true, "data": users})
+}
+
+func GetUserByID(c *fiber.Ctx) error {
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "ID tidak valid"})
+	}
+
+	user, err := repository.GetUserByID(database.DB, id)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"success": false, "message": "User tidak ditemukan"})
+	}
+	return c.JSON(fiber.Map{"success": true, "data": user})
+}
+
+func CreateUser(c *fiber.Ctx) error {
+	var req model.CreateUserRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "Request body tidak valid"})
+	}
+
+	if req.Username == "" || req.Email == "" || req.Password == "" || req.FullName == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "Field wajib: username, email, password, full_name"})
+	}
+
+	// Hash password
+	passwordHash, err := helper.HashPassword(req.Password)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"success": false, "message": "Gagal hashing password"})
+	}
+
+	user := &model.User{
+		Username:     req.Username,
+		Email:        req.Email,
+		PasswordHash: passwordHash,
+		FullName:     req.FullName,
+		RoleID:       req.RoleID,
+	}
+
+	if err := repository.CreateUser(database.DB, user); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false, "message": "Gagal menambah user", "error": err.Error(),
+		})
+	}
+
+	// Sembunyikan password hash dari response
+	user.PasswordHash = ""
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"success": true, "message": "User berhasil ditambahkan", "data": user})
+}
+
+func UpdateUser(c *fiber.Ctx) error {
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "ID tidak valid"})
+	}
+
+	var req model.UpdateUserRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "Request body tidak valid"})
+	}
+
+	user, err := repository.GetUserByID(database.DB, id)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"success": false, "message": "User tidak ditemukan"})
+	}
+
+	// Update field
+	if req.Username != "" {
+		user.Username = req.Username
+	}
+	if req.Email != "" {
+		user.Email = req.Email
+	}
+	if req.FullName != "" {
+		user.FullName = req.FullName
+	}
+	if req.RoleID != uuid.Nil {
+		user.RoleID = req.RoleID
+	}
+	if req.IsActive != nil {
+		user.IsActive = *req.IsActive
+	}
+
+	if err := repository.UpdateUser(database.DB, user); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false, "message": "Gagal mengupdate user", "error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{"success": true, "message": "User berhasil diupdate", "data": user})
+}
+
+func DeleteUser(c *fiber.Ctx) error {
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "ID tidak valid"})
+	}
+
+	if err := repository.DeleteUser(database.DB, id); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false, "message": "Gagal menghapus user", "error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{"success": true, "message": "User berhasil dihapus"})
+}
