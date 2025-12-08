@@ -171,3 +171,75 @@ func UpdateUserRole(c *fiber.Ctx) error {
 		},
 	})
 }
+
+func Login(c *fiber.Ctx) error {
+	// 1. Parsing Input
+	var req model.LoginRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status": "fail", 
+			"message": "Request body tidak valid",
+		})
+	}
+
+	// 2. Validasi Input
+	if req.Username == "" || req.Password == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status": "fail", 
+			"message": "Username dan Password wajib diisi",
+		})
+	}
+
+	// 3. Cari User di DB
+	user, err := repository.GetUserByUsername(database.DB, req.Username)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"status": "fail", 
+			"message": "Username atau password salah",
+		})
+	}
+
+	// 4. Cek Status Aktif
+	if !user.IsActive {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"status": "fail", 
+			"message": "Akun dinonaktifkan",
+		})
+	}
+
+	// 5. Cek Password
+	match := helper.CheckPasswordHash(req.Password, user.PasswordHash)
+	if !match {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"status": "fail", 
+			"message": "Username atau password salah",
+		})
+	}
+
+	// 6. Generate Token
+	token, err := helper.GenerateToken(user.ID.String(), user.RoleID.String())
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status": "error", 
+			"message": "Gagal generate token",
+		})
+	}
+
+	// 7. SIAPKAN RESPONSE (SESUAI STRUKTUR SRS)
+	response := model.LoginResponse{
+		Status: "success",
+		Data: model.LoginResponseData{
+			Token:        token,
+			RefreshToken: "", // Kosongkan dulu (Dummy) karena tabel refresh token belum ada
+			User: model.UserLoginData{
+				ID:       user.ID,
+				Username: user.Username,
+				FullName: user.FullName,
+				RoleID:   user.RoleID,
+			},
+		},
+	}
+
+	// 8. Return JSON
+	return c.JSON(response)
+}

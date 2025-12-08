@@ -9,6 +9,9 @@ import (
 func SetupUserRoutes(api fiber.Router) {
 	users := api.Group("/users")
 
+	// --- ROUTE LOGIN (PUBLIC) ---
+	users.Post("/login", service.Login)
+
 	users.Get("/", service.GetAllUsers)
 	users.Get("/:id", service.GetUserByID)
 	users.Post("/", service.CreateUser) // Ini user general

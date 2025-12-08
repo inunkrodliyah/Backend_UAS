@@ -29,6 +29,22 @@ func GetAllUsers(db *sql.DB) ([]model.User, error) {
 	return users, nil
 }
 
+// GetUserByUsername mencari user untuk keperluan login
+func GetUserByUsername(db *sql.DB, username string) (*model.User, error) {
+	var u model.User
+	// Kita SELECT password_hash karena butuh untuk verifikasi
+	row := db.QueryRow(`
+		SELECT id, username, email, password_hash, full_name, role_id, is_active, created_at, updated_at
+		FROM users WHERE username = $1
+	`, username)
+
+	err := row.Scan(&u.ID, &u.Username, &u.Email, &u.PasswordHash, &u.FullName, &u.RoleID, &u.IsActive, &u.CreatedAt, &u.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &u, nil
+}
+
 func GetUserByID(db *sql.DB, id uuid.UUID) (*model.User, error) {
 	var u model.User
 	row := db.QueryRow(`
