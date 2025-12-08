@@ -6,40 +6,44 @@ import (
 	"github.com/google/uuid"
 )
 
-// Definisikan tipe data custom untuk status (sesuai ENUM 'achievement_status' di DB)
+// Enum status (HARUS sama dengan PostgreSQL)
 type AchievementStatus string
 
 const (
-	StatusPending  AchievementStatus = "pending"
-	StatusApproved AchievementStatus = "approved"
-	StatusRejected AchievementStatus = "rejected"
+	StatusDraft     AchievementStatus = "draft"
+	StatusSubmitted AchievementStatus = "submitted"
+	StatusVerified  AchievementStatus = "verified"
+	StatusRejected  AchievementStatus = "rejected"
 )
 
-// AchievementReference struct ini sekarang mencerminkan tabel 'achievement_references' Anda
+// AchievementReference mencerminkan tabel PostgreSQL
 type AchievementReference struct {
-	ID                   uuid.UUID          `json:"id"`
-	StudentID            uuid.UUID          `json:"student_id"`
-	MongoAchievementID   string             `json:"mongo_achievement_id"`
-	Status               AchievementStatus  `json:"status"`
-	SubmittedAt          *time.Time         `json:"submitted_at"`     // Pointer untuk handle NULL
-	VerifiedAt           *time.Time         `json:"verified_at"`      // Pointer untuk handle NULL
-	VerifiedBy           *uuid.UUID         `json:"verified_by"`      // Pointer untuk handle NULL
-	RejectionNote        *string            `json:"rejection_note"`   // Pointer untuk handle NULL
-	CreatedAt            time.Time          `json:"created_at"`
-	UpdatedAt            time.Time          `json:"updated_at"`
+	ID                 uuid.UUID         `json:"id"`
+	StudentID          uuid.UUID         `json:"student_id"`
+	MongoAchievementID string            `json:"mongo_achievement_id"`
+	Status             AchievementStatus `json:"status"`
+	SubmittedAt        *time.Time        `json:"submitted_at"`
+	VerifiedAt         *time.Time        `json:"verified_at"`
+	VerifiedBy         *uuid.UUID        `json:"verified_by"`
+	RejectionNote      *string           `json:"rejection_note"`
+	CreatedAt          time.Time         `json:"created_at"`
+	UpdatedAt          time.Time         `json:"updated_at"`
 }
 
-//  STRUCT REQUEST BARU UNTUK CREATE (SUBMIT) 
-// Ini adalah data yang dikirim Mahasiswa saat submit prestasi
-type CreateAchievementReferenceRequest struct {
-	StudentID          uuid.UUID `json:"student_id"`
-	MongoAchievementID string    `json:"mongo_achievement_id"`
+// --- STRUCT REQUEST SUBMIT ---
+type SubmitAchievementRequest struct {
+	StudentID       uuid.UUID              `json:"student_id"`
+	AchievementType string                 `json:"achievement_type"`
+	Title           string                 `json:"title"`
+	Description     string                 `json:"description"`
+	Details         map[string]interface{} `json:"details"`
+	Tags            []string               `json:"tags"`
+	Points          int                    `json:"points"`
 }
 
-// --- STRUCT REQUEST BARU UNTUK UPDATE (VERIFY/REJECT) ---
-// Ini adalah data yang dikirim Dosen/Admin saat memverifikasi
+// --- STRUCT REQUEST UPDATE STATUS ---
 type UpdateAchievementStatusRequest struct {
-	Status        AchievementStatus `json:"status"`         // "approved" or "rejected"
-	VerifiedBy    uuid.UUID         `json:"verified_by"`    // ID Dosen/Admin yang memverifikasi
-	RejectionNote *string           `json:"rejection_note"` // Opsional, wajib diisi jika status "rejected"
+	Status        AchievementStatus `json:"status"`
+	VerifiedBy    uuid.UUID         `json:"verified_by"`
+	RejectionNote *string           `json:"rejection_note"`
 }

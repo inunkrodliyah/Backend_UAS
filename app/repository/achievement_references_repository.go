@@ -22,7 +22,6 @@ func GetAllAchievementReferences(db *sql.DB) ([]model.AchievementReference, erro
 	var refs []model.AchievementReference
 	for rows.Next() {
 		var r model.AchievementReference
-		// Scan diubah: Sesuai 10 kolom
 		if err := rows.Scan(
 			&r.ID, &r.StudentID, &r.MongoAchievementID, &r.Status, &r.SubmittedAt,
 			&r.VerifiedAt, &r.VerifiedBy, &r.RejectionNote, &r.CreatedAt, &r.UpdatedAt,
@@ -42,7 +41,7 @@ func GetAchievementReferenceByID(db *sql.DB, id uuid.UUID) (*model.AchievementRe
                verified_at, verified_by, rejection_note, created_at, updated_at
         FROM achievement_references WHERE id = $1
     `, id)
-	
+
 	err := row.Scan(
 		&r.ID, &r.StudentID, &r.MongoAchievementID, &r.Status, &r.SubmittedAt,
 		&r.VerifiedAt, &r.VerifiedBy, &r.RejectionNote, &r.CreatedAt, &r.UpdatedAt,
@@ -56,15 +55,17 @@ func GetAchievementReferenceByID(db *sql.DB, id uuid.UUID) (*model.AchievementRe
 func CreateAchievementReference(db *sql.DB, r *model.AchievementReference) error {
 	r.ID = uuid.New()
 	now := time.Now()
-	r.CreatedAt = now
+	if r.CreatedAt.IsZero() {
+		r.CreatedAt = now
+	}
 	r.UpdatedAt = now
-	
+
 	_, err := db.Exec(`
         INSERT INTO achievement_references 
         (id, student_id, mongo_achievement_id, status, submitted_at, created_at, updated_at)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
     `, r.ID, r.StudentID, r.MongoAchievementID, r.Status, r.SubmittedAt, r.CreatedAt, r.UpdatedAt)
-	
+
 	return err
 }
 
