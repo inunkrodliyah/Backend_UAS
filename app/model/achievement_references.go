@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// Enum status (HARUS sama dengan PostgreSQL)
+// Enum status
 type AchievementStatus string
 
 const (
@@ -16,7 +16,7 @@ const (
 	StatusRejected  AchievementStatus = "rejected"
 )
 
-// AchievementReference mencerminkan tabel PostgreSQL
+// AchievementReference (Sesuai Tabel PostgreSQL)
 type AchievementReference struct {
 	ID                 uuid.UUID         `json:"id"`
 	StudentID          uuid.UUID         `json:"student_id"`
@@ -30,8 +30,8 @@ type AchievementReference struct {
 	UpdatedAt          time.Time         `json:"updated_at"`
 }
 
-// --- STRUCT REQUEST SUBMIT ---
-type SubmitAchievementRequest struct {
+// Request: Create / Submit Awal (Draft)
+type CreateAchievementRequest struct {
 	StudentID       uuid.UUID              `json:"student_id"`
 	AchievementType string                 `json:"achievement_type"`
 	Title           string                 `json:"title"`
@@ -41,9 +41,24 @@ type SubmitAchievementRequest struct {
 	Points          int                    `json:"points"`
 }
 
-// --- STRUCT REQUEST UPDATE STATUS ---
-type UpdateAchievementStatusRequest struct {
-	Status        AchievementStatus `json:"status"`
-	VerifiedBy    uuid.UUID         `json:"verified_by"`
-	RejectionNote *string           `json:"rejection_note"`
+// Request: Update Prestasi (Hanya bisa saat Draft)
+type UpdateAchievementRequest struct {
+	Title       string                 `json:"title"`
+	Description string                 `json:"description"`
+	Details     map[string]interface{} `json:"details"`
+	Tags        []string               `json:"tags"`
+	Points      int                    `json:"points"`
+}
+
+// Request: Reject
+type RejectAchievementRequest struct {
+	RejectionNote string `json:"rejection_note"`
+}
+
+// Response: History
+type AchievementHistoryResponse struct {
+	Status    AchievementStatus `json:"status"`
+	Timestamp time.Time         `json:"timestamp"`
+	Actor     string            `json:"actor"` // "Mahasiswa" atau "Dosen"
+	Note      *string           `json:"note,omitempty"`
 }

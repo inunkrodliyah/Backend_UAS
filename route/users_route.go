@@ -1,6 +1,7 @@
 package route
 
 import (
+	"project-uas/middleware"
 	"project-uas/app/service"
 
 	"github.com/gofiber/fiber/v2"
@@ -9,13 +10,14 @@ import (
 func SetupUserRoutes(api fiber.Router) {
 	users := api.Group("/users")
 
-	// --- ROUTE LOGIN (PUBLIC) ---
-	users.Post("/login", service.Login)
+	// Endpoint Users (5.2) - PROTECTED (Admin Only)
+	users.Use(middleware.AuthProtected)
+    // Optional: Tambahkan middleware.RequirePermission("user:manage") jika ingin lebih ketat
 
 	users.Get("/", service.GetAllUsers)
 	users.Get("/:id", service.GetUserByID)
-	users.Post("/", service.CreateUser) // Ini user general
+	users.Post("/", service.CreateUser)
 	users.Put("/:id", service.UpdateUser)
-	users.Put("/:id/role", service.UpdateUserRole)
 	users.Delete("/:id", service.DeleteUser)
+	users.Put("/:id/role", service.UpdateUserRole)
 }

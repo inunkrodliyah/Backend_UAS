@@ -6,11 +6,12 @@ import (
 	"github.com/google/uuid"
 )
 
+// Entity Database
 type User struct {
 	ID           uuid.UUID `json:"id"`
 	Username     string    `json:"username"`
 	Email        string    `json:"email"`
-	PasswordHash string    `json:"-"` 
+	PasswordHash string    `json:"-"` // Hidden
 	FullName     string    `json:"full_name"`
 	RoleID       uuid.UUID `json:"role_id"`
 	IsActive     bool      `json:"is_active"`
@@ -18,6 +19,7 @@ type User struct {
 	UpdatedAt    time.Time `json:"updated_at"`
 }
 
+// Request Create User
 type CreateUserRequest struct {
 	Username string    `json:"username"`
 	Email    string    `json:"email"`
@@ -26,38 +28,16 @@ type CreateUserRequest struct {
 	RoleID   uuid.UUID `json:"role_id"`
 }
 
+// Request Update User
 type UpdateUserRequest struct {
 	Username string    `json:"username"`
 	Email    string    `json:"email"`
 	FullName string    `json:"full_name"`
 	RoleID   uuid.UUID `json:"role_id"`
-	IsActive *bool     `json:"is_active"` 
+	IsActive *bool     `json:"is_active"`
 }
 
-// LoginRequest: Input dari user
-type LoginRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-// UserLoginData: Objek 'user' di dalam 'data'
-type UserLoginData struct {
-	ID       uuid.UUID `json:"id"`
-	Username string    `json:"username"`
-	FullName string    `json:"fullName"` // SRS biasanya pakai camelCase
-	RoleID   uuid.UUID `json:"roleId"`   // Sementara pakai RoleID dulu
-	// Permissions []string `json:"permissions"` // Opsional: Tambahkan jika sudah ada logic permission
-}
-
-// LoginResponseData: Objek 'data'
-type LoginResponseData struct {
-	Token        string        `json:"token"`
-	RefreshToken string        `json:"refreshToken"` // SRS minta refreshToken
-	User         UserLoginData `json:"user"`         // Nested Object User
-}
-
-// LoginResponse: Wrapper Utama (Root)
-type LoginResponse struct {
-	Status string            `json:"status"` // "success" atau "fail"
-	Data   LoginResponseData `json:"data"`
+// Request Update Role Only
+type UpdateUserRoleRequest struct {
+	RoleID uuid.UUID `json:"role_id"`
 }

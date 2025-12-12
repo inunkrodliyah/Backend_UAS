@@ -55,3 +55,4 @@ func RevokePermissionFromRole(db *sql.DB, roleID, permissionID uuid.UUID) error 
     `, roleID, permissionID)
 	return err
 }
+
