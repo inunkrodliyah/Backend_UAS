@@ -13,7 +13,8 @@ func SetupStudentRoutes(api fiber.Router) {
 	// Pasang Middleware Auth
 	students.Use(middleware.AuthProtected)
 
-	students.Post("/", service.CreateStudent)
+	// HANYA ADMIN (Permission: student:create)
+	students.Post("/", middleware.RequirePermission("student:create"), service.CreateStudent)
 	students.Get("/", service.GetAllStudents)
 	students.Get("/:id", service.GetStudentByUserID)
 	students.Put("/:id", service.UpdateStudent)

@@ -8,12 +8,13 @@ import (
 )
 
 func SetupReportRoutes(api fiber.Router) {
-	reports := api.Group("/reports")
+    reports := api.Group("/reports")
 
-	// Pasang Middleware (Wajib Login)
-	reports.Use(middleware.AuthProtected)
+    reports.Use(middleware.AuthProtected)
+    
+    // Tambahkan baris ini agar endpoint dicek permission-nya
+    reports.Use(middleware.RequirePermission("report:read"))
 
-	// 5.8 Reports & Analytics
-	reports.Get("/statistics", service.GetSystemStatistics) // Dashboard Admin/Dosen
-	reports.Get("/student/:id", service.GetStudentReport)   // Raport Mahasiswa (By User ID)
+    reports.Get("/statistics", service.GetSystemStatistics)
+    reports.Get("/student/:id", service.GetStudentReport)
 }

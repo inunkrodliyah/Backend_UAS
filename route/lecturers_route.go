@@ -13,7 +13,8 @@ func SetupLecturerRoutes(api fiber.Router) {
 	// Pasang Middleware Auth
 	lecturers.Use(middleware.AuthProtected)
 
-	lecturers.Post("/", service.CreateLecturer)
+	// HANYA ADMIN (Permission: lecturer:create)
+	lecturers.Post("/", middleware.RequirePermission("lecturer:create"), service.CreateLecturer)
 	lecturers.Get("/", service.GetAllLecturers)
 	lecturers.Get("/:id", service.GetLecturerByUserID)
 	lecturers.Put("/:id", service.UpdateLecturer)
