@@ -14,9 +14,10 @@ const (
 	StatusSubmitted AchievementStatus = "submitted"
 	StatusVerified  AchievementStatus = "verified"
 	StatusRejected  AchievementStatus = "rejected"
+	StatusDeleted   AchievementStatus = "deleted" // TAMBAHAN 1: Status Baru
 )
 
-// AchievementReference (Sesuai Tabel PostgreSQL)
+// AchievementReference
 type AchievementReference struct {
 	ID                 uuid.UUID         `json:"id"`
 	StudentID          uuid.UUID         `json:"student_id"`
@@ -28,6 +29,7 @@ type AchievementReference struct {
 	RejectionNote      *string           `json:"rejection_note"`
 	CreatedAt          time.Time         `json:"created_at"`
 	UpdatedAt          time.Time         `json:"updated_at"`
+	DeletedAt          *time.Time        `json:"deleted_at,omitempty"` // TAMBAHAN 2: Field Baru
 }
 
 // Request: Create / Submit Awal (Draft)

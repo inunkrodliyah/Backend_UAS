@@ -118,15 +118,27 @@ func DeleteAchievement(c *fiber.Ctx) error {
 	ref, err := repository.GetAchievementReferenceByID(database.DB, id)
 	if err != nil { return c.SendStatus(404) }
 
+	// Validasi: Hanya draft yang bisa dihapus (tetap dipertahankan)
 	if ref.Status != model.StatusDraft {
 		return c.Status(400).JSON(fiber.Map{"success": false, "message": "Hanya draft yang bisa dihapus"})
 	}
 
-	// Delete Mongo & Postgres
-	repository.DeleteAchievementMongo(database.MongoDB, ref.MongoAchievementID)
-	repository.DeleteAchievementReference(database.DB, id)
+	// 1. JANGAN Hapus data di Mongo jika ingin bisa di-restore nantinya.
+	// Jika tetap ingin menghapus mongo secara permanen, biarkan baris ini.
+	// repository.DeleteAchievementMongo(database.MongoDB, ref.MongoAchievementID) 
+    
+    // ATAU: Implementasikan Soft Delete juga di Mongo (menambah field deletedAt di Mongo).
+    // Untuk sekarang, kita anggap Mongo dibiarkan saja (data sampah) atau dihapus permanen.
+    // Jika Anda menghapus permanen Mongo:
+    repository.DeleteAchievementMongo(database.MongoDB, ref.MongoAchievementID)
 
-	return c.JSON(fiber.Map{"success": true, "message": "Deleted"})
+	// 2. Soft Delete di Postgres (Fungsi repository sudah diubah jadi UPDATE)
+	err = repository.DeleteAchievementReference(database.DB, id)
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{"success": false, "message": "Gagal menghapus"})
+    }
+
+	return c.JSON(fiber.Map{"success": true, "message": "Deleted (Soft)"})
 }
 
 // POST /api/v1/achievements/:id/submit
