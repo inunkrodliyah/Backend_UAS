@@ -10,6 +10,15 @@ import (
 )
 
 // GET /api/v1/reports/statistics
+// GetSystemStatistics godoc
+// @Summary      Statistik Sistem
+// @Description  Menampilkan ringkasan total mahasiswa, dosen, dan statistik prestasi (berdasarkan status & tipe)
+// @Tags         Reports
+// @Security     BearerAuth
+// @Produce      json
+// @Success      200  {object}  fiber.Map{data=model.SystemStatisticsResponse}
+// @Failure      500  {object}  fiber.Map
+// @Router       /reports/statistics [get]
 func GetSystemStatistics(c *fiber.Ctx) error {
 	// 1. Ambil Data dari PostgreSQL
 	totalStudents, _ := repository.CountTotalUsersByRole(database.DB, "student")
@@ -41,6 +50,17 @@ func GetSystemStatistics(c *fiber.Ctx) error {
 }
 
 // GET /api/v1/reports/student/:id
+// GetStudentReport godoc
+// @Summary      Laporan Prestasi Mahasiswa
+// @Description  Mendapatkan detail profil, total poin, dan daftar prestasi mahasiswa tertentu berdasarkan User ID
+// @Tags         Reports
+// @Security     BearerAuth
+// @Produce      json
+// @Param        id   path      string  true  "User ID (UUID)"
+// @Success      200  {object}  fiber.Map{data=model.StudentReportResponse}
+// @Failure      400  {object}  fiber.Map
+// @Failure      404  {object}  fiber.Map
+// @Router       /reports/student/{id} [get]
 func GetStudentReport(c *fiber.Ctx) error {
 	// Param ID bisa berupa StudentID (UUID table students) atau UserID.
 	// Asumsi disini adalah UserID (dari login).

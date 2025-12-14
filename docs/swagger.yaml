@@ -1,0 +1,1762 @@
+basePath: /api/v1
+definitions:
+  fiber.Map:
+    additionalProperties: true
+    type: object
+  model.AchievementHistoryResponse:
+    properties:
+      actor:
+        description: '"Mahasiswa" atau "Dosen"'
+        type: string
+      note:
+        type: string
+      status:
+        $ref: '#/definitions/model.AchievementStatus'
+      timestamp:
+        type: string
+    type: object
+  model.AchievementReference:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        description: 'TAMBAHAN 2: Field Baru'
+        type: string
+      id:
+        type: string
+      mongo_achievement_id:
+        type: string
+      rejection_note:
+        type: string
+      status:
+        $ref: '#/definitions/model.AchievementStatus'
+      student_id:
+        type: string
+      submitted_at:
+        type: string
+      updated_at:
+        type: string
+      verified_at:
+        type: string
+      verified_by:
+        type: string
+    type: object
+  model.AchievementStatus:
+    enum:
+    - draft
+    - submitted
+    - verified
+    - rejected
+    - deleted
+    type: string
+    x-enum-comments:
+      StatusDeleted: 'TAMBAHAN 1: Status Baru'
+    x-enum-descriptions:
+    - ""
+    - ""
+    - ""
+    - ""
+    - 'TAMBAHAN 1: Status Baru'
+    x-enum-varnames:
+    - StatusDraft
+    - StatusSubmitted
+    - StatusVerified
+    - StatusRejected
+    - StatusDeleted
+  model.AssignPermissionRequest:
+    properties:
+      permission_id:
+        type: string
+      role_id:
+        type: string
+    type: object
+  model.AuthResponse:
+    properties:
+      data:
+        description: Bisa LoginResponseData atau User Profile
+      status:
+        description: '"success"'
+        type: string
+    type: object
+  model.CreateAchievementRequest:
+    properties:
+      achievement_type:
+        type: string
+      description:
+        type: string
+      details:
+        additionalProperties: true
+        type: object
+      points:
+        type: integer
+      student_id:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
+  model.CreateLecturerRequest:
+    properties:
+      department:
+        type: string
+      lecturer_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  model.CreatePermissionRequest:
+    properties:
+      action:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      resource:
+        type: string
+    type: object
+  model.CreateRoleRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  model.CreateStudentRequest:
+    properties:
+      academic_year:
+        type: string
+      advisor_id:
+        type: string
+      program_study:
+        type: string
+      student_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  model.CreateUserRequest:
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      password:
+        type: string
+      role_id:
+        type: string
+      username:
+        type: string
+    type: object
+  model.Lecturer:
+    properties:
+      created_at:
+        type: string
+      department:
+        type: string
+      id:
+        type: string
+      lecturer_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  model.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  model.Permission:
+    properties:
+      action:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      resource:
+        type: string
+    type: object
+  model.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  model.RejectAchievementRequest:
+    properties:
+      rejection_note:
+        type: string
+    type: object
+  model.Role:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  model.SimpleAchievementView:
+    properties:
+      achievement_type:
+        type: string
+      id:
+        type: string
+      points:
+        type: integer
+      status:
+        type: string
+      title:
+        type: string
+    type: object
+  model.Student:
+    properties:
+      academic_year:
+        type: string
+      advisor_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      program_study:
+        type: string
+      student_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  model.StudentReportResponse:
+    properties:
+      achievements_list:
+        items:
+          $ref: '#/definitions/model.SimpleAchievementView'
+        type: array
+      full_name:
+        type: string
+      program_study:
+        type: string
+      student_id:
+        type: string
+      total_achievements:
+        type: integer
+      total_points:
+        description: Hitung poin dari Mongo
+        type: integer
+    type: object
+  model.SystemStatisticsResponse:
+    properties:
+      achievements_by_status:
+        additionalProperties:
+          type: integer
+        description: Draft, Submitted, Verified
+        type: object
+      achievements_by_type:
+        additionalProperties:
+          type: integer
+        description: Competition, Seminar, etc (Dari Mongo)
+        type: object
+      total_achievements:
+        type: integer
+      total_lecturers:
+        type: integer
+      total_students:
+        type: integer
+    type: object
+  model.UpdateAchievementRequest:
+    properties:
+      description:
+        type: string
+      details:
+        additionalProperties: true
+        type: object
+      points:
+        type: integer
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
+  model.UpdateAdvisorRequest:
+    properties:
+      advisor_id:
+        type: string
+    type: object
+  model.UpdateLecturerRequest:
+    properties:
+      department:
+        type: string
+      lecturer_id:
+        type: string
+    type: object
+  model.UpdatePermissionRequest:
+    properties:
+      action:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      resource:
+        type: string
+    type: object
+  model.UpdateRoleRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  model.UpdateStudentRequest:
+    properties:
+      academic_year:
+        type: string
+      advisor_id:
+        type: string
+      program_study:
+        type: string
+      student_id:
+        type: string
+    type: object
+  model.UpdateUserRequest:
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      is_active:
+        type: boolean
+      role_id:
+        type: string
+      username:
+        type: string
+    type: object
+  model.UpdateUserRoleRequest:
+    properties:
+      role_id:
+        type: string
+    type: object
+  model.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      role_id:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:1063
+info:
+  contact:
+    email: admin@univ.ac.id
+    name: Tim Pengembang
+  description: Dokumentasi API untuk Project UAS Backend Lanjutan
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Sistem Pencatatan Prestasi Mahasiswa API
+  version: "1.0"
+paths:
+  /achievements:
+    get:
+      description: 'Menampilkan daftar prestasi berdasarkan role (Mahasiswa: milik
+        sendiri, Dosen: milik bimbingan, Admin: semua)'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.AchievementReference'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Lihat Daftar Prestasi
+      tags:
+      - Achievements
+    post:
+      consumes:
+      - application/json
+      description: Mahasiswa membuat draft prestasi baru
+      parameters:
+      - description: Data Prestasi
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateAchievementRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Buat Prestasi Baru (Draft)
+      tags:
+      - Achievements
+  /achievements/{id}:
+    delete:
+      description: Menghapus prestasi (hanya draft) secara soft delete
+      parameters:
+      - description: Achievement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Hapus Prestasi (Soft Delete)
+      tags:
+      - Achievements
+    get:
+      description: Mendapatkan detail lengkap prestasi (gabungan data Postgres & MongoDB)
+        berdasarkan ID
+      parameters:
+      - description: Achievement ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Lihat Detail Prestasi
+      tags:
+      - Achievements
+    put:
+      consumes:
+      - application/json
+      description: Mahasiswa mengedit data prestasi yang masih berstatus draft
+      parameters:
+      - description: Achievement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Data Update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateAchievementRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Edit Prestasi (Hanya Draft)
+      tags:
+      - Achievements
+  /achievements/{id}/attachments:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload file PDF/Gambar bukti prestasi
+      parameters:
+      - description: Achievement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Bukti File (PDF/JPG)
+        in: formData
+        name: file
+        required: true
+        type: file
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Upload Bukti Dokumen
+      tags:
+      - Achievements
+  /achievements/{id}/history:
+    get:
+      description: Melihat jejak perubahan status (Draft -> Submitted -> Rejected
+        -> dst)
+      parameters:
+      - description: Achievement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.AchievementHistoryResponse'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Lihat History Status
+      tags:
+      - Achievements
+  /achievements/{id}/reject:
+    post:
+      description: Dosen menolak prestasi dengan catatan revisi
+      parameters:
+      - description: Achievement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Alasan Penolakan
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.RejectAchievementRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Tolak Prestasi (Dosen)
+      tags:
+      - Achievements
+  /achievements/{id}/submit:
+    post:
+      description: Mengubah status Draft menjadi Submitted agar bisa diverifikasi
+      parameters:
+      - description: Achievement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Submit ke Dosen Wali
+      tags:
+      - Achievements
+  /achievements/{id}/verify:
+    post:
+      description: Dosen menyetujui prestasi mahasiswa
+      parameters:
+      - description: Achievement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Verifikasi Prestasi (Dosen)
+      tags:
+      - Achievements
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Masuk sistem untuk mendapatkan Access Token & Refresh Token
+      parameters:
+      - description: Email & Password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.AuthResponse'
+      summary: Login User
+      tags:
+      - Auth
+  /auth/logout:
+    post:
+      description: Menghapus sesi login (Revoke Token)
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Logout
+      tags:
+      - Auth
+  /auth/profile:
+    get:
+      description: Melihat data diri user yang sedang login
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.AuthResponse'
+      security:
+      - BearerAuth: []
+      summary: Get My Profile
+      tags:
+      - Auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Mendapatkan token baru menggunakan Refresh Token
+      parameters:
+      - description: Refresh Token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      summary: Refresh Access Token
+      tags:
+      - Auth
+  /lecturers:
+    get:
+      description: Mendapatkan daftar semua dosen yang terdaftar
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Lecturer'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Lihat Semua Dosen
+      tags:
+      - Lecturers
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan profil dosen ke user yang sudah ada (Admin)
+      parameters:
+      - description: Data Dosen
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateLecturerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Lecturer'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Tambah Data Dosen
+      tags:
+      - Lecturers
+  /lecturers/{id}:
+    get:
+      description: Melihat detail data dosen beserta info user-nya berdasarkan User
+        ID
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Detail Dosen by ID
+      tags:
+      - Lecturers
+    put:
+      consumes:
+      - application/json
+      description: Mengubah data NIP/NIDN atau Departemen Dosen
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Data Update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateLecturerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Lecturer'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Update Profil Dosen
+      tags:
+      - Lecturers
+  /lecturers/{id}/advisees:
+    get:
+      description: Melihat daftar mahasiswa yang dibimbing oleh dosen tertentu
+      parameters:
+      - description: Lecturer/User UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Student'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Lihat Mahasiswa Bimbingan
+      tags:
+      - Lecturers
+  /permissions:
+    get:
+      description: Mendapatkan daftar semua hak akses (permission) yang tersedia di
+        sistem
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Permission'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Lihat Semua Permission
+      tags:
+      - Permissions
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan permission baru (Resource + Action) ke dalam sistem
+      parameters:
+      - description: Data Permission
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreatePermissionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Permission'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Buat Permission Baru
+      tags:
+      - Permissions
+  /permissions/{id}:
+    delete:
+      description: Menghapus permission dari sistem berdasarkan ID
+      parameters:
+      - description: Permission ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Hapus Permission
+      tags:
+      - Permissions
+    get:
+      description: Mendapatkan detail permission berdasarkan ID
+      parameters:
+      - description: Permission ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Permission'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Detail Permission
+      tags:
+      - Permissions
+    put:
+      consumes:
+      - application/json
+      description: Mengubah data permission (Name, Resource, Action, Description)
+      parameters:
+      - description: Permission ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Data Update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdatePermissionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Permission'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Update Permission
+      tags:
+      - Permissions
+  /reports/statistics:
+    get:
+      description: Menampilkan ringkasan total mahasiswa, dosen, dan statistik prestasi
+        (berdasarkan status & tipe)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.SystemStatisticsResponse'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Statistik Sistem
+      tags:
+      - Reports
+  /reports/student/{id}:
+    get:
+      description: Mendapatkan detail profil, total poin, dan daftar prestasi mahasiswa
+        tertentu berdasarkan User ID
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.StudentReportResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Laporan Prestasi Mahasiswa
+      tags:
+      - Reports
+  /roles:
+    get:
+      description: Mendapatkan daftar semua role yang tersedia di sistem
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Role'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Lihat Semua Role
+      tags:
+      - Roles
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan role baru ke dalam sistem
+      parameters:
+      - description: Data Role
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Role'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Buat Role Baru
+      tags:
+      - Roles
+  /roles/{id}:
+    delete:
+      description: Menghapus role dari sistem berdasarkan ID
+      parameters:
+      - description: Role ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Hapus Role
+      tags:
+      - Roles
+    get:
+      description: Mendapatkan detail role berdasarkan ID
+      parameters:
+      - description: Role ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Role'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Detail Role
+      tags:
+      - Roles
+    put:
+      consumes:
+      - application/json
+      description: Mengubah data role (Nama dan Deskripsi)
+      parameters:
+      - description: Role ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Data Update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Role'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Update Role
+      tags:
+      - Roles
+  /roles/{role_id}/permissions:
+    get:
+      description: Mendapatkan daftar permission yang dimiliki oleh Role tertentu
+      parameters:
+      - description: Role ID (UUID)
+        in: path
+        name: role_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Permission'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Lihat Permission milik Role
+      tags:
+      - RolePermissions
+  /roles/{role_id}/permissions/{permission_id}:
+    delete:
+      description: Mencabut hak akses (permission) dari sebuah role
+      parameters:
+      - description: Role ID (UUID)
+        in: path
+        name: role_id
+        required: true
+        type: string
+      - description: Permission ID (UUID)
+        in: path
+        name: permission_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Revoke Permission dari Role
+      tags:
+      - RolePermissions
+  /roles/permissions:
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan hak akses (permission) ke sebuah role
+      parameters:
+      - description: Data Assign
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.AssignPermissionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Assign Permission ke Role
+      tags:
+      - RolePermissions
+  /students:
+    get:
+      description: Mendapatkan daftar semua mahasiswa yang terdaftar
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Student'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Lihat Semua Mahasiswa
+      tags:
+      - Students
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan profil mahasiswa ke user yang sudah ada (Admin)
+      parameters:
+      - description: Data Mahasiswa
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateStudentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Student'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Tambah Data Mahasiswa
+      tags:
+      - Students
+  /students/{id}:
+    get:
+      description: Melihat detail profil mahasiswa beserta data usernya berdasarkan
+        User ID
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Detail Mahasiswa by ID
+      tags:
+      - Students
+    put:
+      consumes:
+      - application/json
+      description: Mengubah data NIM, Prodi, atau Dosen Wali
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Data Update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateStudentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Student'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Update Profil Mahasiswa
+      tags:
+      - Students
+  /students/{id}/achievements:
+    get:
+      description: Mendapatkan daftar prestasi milik mahasiswa tertentu berdasarkan
+        User ID
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.AchievementReference'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Lihat Prestasi Mahasiswa
+      tags:
+      - Students
+  /students/{id}/advisor:
+    put:
+      consumes:
+      - application/json
+      description: Mengubah dosen wali mahasiswa tertentu
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Dosen Wali ID (Lecturer UUID)
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateAdvisorRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Update Dosen Wali
+      tags:
+      - Students
+  /users:
+    get:
+      description: Admin melihat daftar semua user yang terdaftar
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.User'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Lihat Semua User
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Admin membuat user manual (Mahasiswa/Dosen)
+      parameters:
+      - description: Data User
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Buat User Baru
+      tags:
+      - Users
+  /users/{id}:
+    delete:
+      description: Menghapus user dari sistem berdasarkan ID
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Hapus User
+      tags:
+      - Users
+    get:
+      description: Melihat detail data user berdasarkan ID
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Lihat Detail User
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Mengubah data profil user (Username, Email, Nama, dll)
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Data Update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/fiber.Map'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Update Profil User
+      tags:
+      - Users
+  /users/{id}/role:
+    put:
+      consumes:
+      - application/json
+      description: Admin mengubah hak akses (role) user tertentu
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Role ID Baru
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateUserRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      security:
+      - BearerAuth: []
+      summary: Ubah Role User
+      tags:
+      - Users
+securityDefinitions:
+  BearerAuth:
+    description: 'Masukkan token dengan format: Bearer <your_token>'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

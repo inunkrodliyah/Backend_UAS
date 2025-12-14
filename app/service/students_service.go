@@ -11,6 +11,15 @@ import (
 	"github.com/google/uuid"
 )
 
+// GetAllStudents godoc
+// @Summary      Lihat Semua Mahasiswa
+// @Description  Mendapatkan daftar semua mahasiswa yang terdaftar
+// @Tags         Students
+// @Security     BearerAuth
+// @Produce      json
+// @Success      200  {object}  fiber.Map{data=[]model.Student}
+// @Failure      500  {object}  fiber.Map
+// @Router       /students [get]
 func GetAllStudents(c *fiber.Ctx) error {
 	students, err := repository.GetAllStudents(database.DB)
 	if err != nil {
@@ -21,6 +30,17 @@ func GetAllStudents(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"success": true, "data": students})
 }
 
+// GetStudentByUserID godoc
+// @Summary      Detail Mahasiswa by ID
+// @Description  Melihat detail profil mahasiswa beserta data usernya berdasarkan User ID
+// @Tags         Students
+// @Security     BearerAuth
+// @Produce      json
+// @Param        id   path      string  true  "User ID (UUID)"
+// @Success      200  {object}  fiber.Map
+// @Failure      400  {object}  fiber.Map
+// @Failure      404  {object}  fiber.Map
+// @Router       /students/{id} [get]
 func GetStudentByUserID(c *fiber.Ctx) error {
 	userID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -54,6 +74,17 @@ func GetStudentByUserID(c *fiber.Ctx) error {
 }
 
 // Mengambil prestasi berdasarkan ID User Mahasiswa
+// GetStudentAchievements godoc
+// @Summary      Lihat Prestasi Mahasiswa
+// @Description  Mendapatkan daftar prestasi milik mahasiswa tertentu berdasarkan User ID
+// @Tags         Students
+// @Security     BearerAuth
+// @Produce      json
+// @Param        id   path      string  true  "User ID (UUID)"
+// @Success      200  {object}  fiber.Map{data=[]model.AchievementReference}
+// @Failure      400  {object}  fiber.Map
+// @Failure      404  {object}  fiber.Map
+// @Router       /students/{id}/achievements [get]
 func GetStudentAchievements(c *fiber.Ctx) error {
 	userID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -75,6 +106,18 @@ func GetStudentAchievements(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"success": true, "data": achievements})
 }
 
+// CreateStudent godoc
+// @Summary      Tambah Data Mahasiswa
+// @Description  Menambahkan profil mahasiswa ke user yang sudah ada (Admin)
+// @Tags         Students
+// @Security     BearerAuth
+// @Accept       json
+// @Produce      json
+// @Param        request body model.CreateStudentRequest true "Data Mahasiswa"
+// @Success      201  {object}  fiber.Map{data=model.Student}
+// @Failure      400  {object}  fiber.Map
+// @Failure      409  {object}  fiber.Map
+// @Router       /students [post]
 func CreateStudent(c *fiber.Ctx) error {
 	var req model.CreateStudentRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -104,6 +147,19 @@ func CreateStudent(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"success": true, "message": "Data mahasiswa berhasil ditambahkan", "data": student})
 }
 
+// UpdateStudent godoc
+// @Summary      Update Profil Mahasiswa
+// @Description  Mengubah data NIM, Prodi, atau Dosen Wali
+// @Tags         Students
+// @Security     BearerAuth
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "User ID (UUID)"
+// @Param        request body model.UpdateStudentRequest true "Data Update"
+// @Success      200  {object}  fiber.Map{data=model.Student}
+// @Failure      400  {object}  fiber.Map
+// @Failure      404  {object}  fiber.Map
+// @Router       /students/{id} [put]
 func UpdateStudent(c *fiber.Ctx) error {
 	userID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -134,6 +190,19 @@ func UpdateStudent(c *fiber.Ctx) error {
 }
 
 // Update Advisor Only
+// UpdateStudentAdvisor godoc
+// @Summary      Update Dosen Wali
+// @Description  Mengubah dosen wali mahasiswa tertentu
+// @Tags         Students
+// @Security     BearerAuth
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "User ID (UUID)"
+// @Param        request body model.UpdateAdvisorRequest true "Dosen Wali ID (Lecturer UUID)"
+// @Success      200  {object}  fiber.Map
+// @Failure      400  {object}  fiber.Map
+// @Failure      500  {object}  fiber.Map
+// @Router       /students/{id}/advisor [put]
 func UpdateStudentAdvisor(c *fiber.Ctx) error {
 	userID, err := uuid.Parse(c.Params("id")) // Ini adalah User ID dari URL
 	if err != nil {

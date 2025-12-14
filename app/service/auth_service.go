@@ -11,6 +11,15 @@ import (
 )
 
 // POST /api/v1/auth/login
+// Login godoc
+// @Summary      Login User
+// @Description  Masuk sistem untuk mendapatkan Access Token & Refresh Token
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        request body model.LoginRequest true "Email & Password"
+// @Success      200  {object}  model.AuthResponse
+// @Router       /auth/login [post]
 func Login(c *fiber.Ctx) error {
 	var req model.LoginRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -63,16 +72,39 @@ func Login(c *fiber.Ctx) error {
 }
 
 // POST /api/v1/auth/refresh
+// RefreshToken godoc
+// @Summary      Refresh Access Token
+// @Description  Mendapatkan token baru menggunakan Refresh Token
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        request body model.RefreshTokenRequest true "Refresh Token"
+// @Success      200  {object}  fiber.Map
+// @Router       /auth/refresh [post]
 func RefreshToken(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"status": "success", "message": "Token refreshed (Logic Placeholder)"})
 }
 
 // POST /api/v1/auth/logout
+// Logout godoc
+// @Summary      Logout
+// @Description  Menghapus sesi login (Revoke Token)
+// @Tags         Auth
+// @Security     BearerAuth
+// @Success      200  {object}  fiber.Map
+// @Router       /auth/logout [post]
 func Logout(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"status": "success", "message": "Logged out successfully"})
 }
 
 // GET /api/v1/auth/profile
+// GetProfile godoc
+// @Summary      Get My Profile
+// @Description  Melihat data diri user yang sedang login
+// @Tags         Auth
+// @Security     BearerAuth
+// @Success      200  {object}  model.AuthResponse
+// @Router       /auth/profile [get]
 func GetProfile(c *fiber.Ctx) error {
 	// Ambil user_id dari middleware
 	userIDStr := c.Locals("user_id").(string)

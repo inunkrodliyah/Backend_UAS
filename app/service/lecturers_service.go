@@ -11,6 +11,15 @@ import (
 	"github.com/google/uuid"
 )
 
+// GetAllLecturers godoc
+// @Summary      Lihat Semua Dosen
+// @Description  Mendapatkan daftar semua dosen yang terdaftar
+// @Tags         Lecturers
+// @Security     BearerAuth
+// @Produce      json
+// @Success      200  {object}  fiber.Map{data=[]model.Lecturer}
+// @Failure      500  {object}  fiber.Map
+// @Router       /lecturers [get]
 func GetAllLecturers(c *fiber.Ctx) error {
 	lecturers, err := repository.GetAllLecturers(database.DB)
 	if err != nil {
@@ -27,7 +36,17 @@ func GetAllLecturers(c *fiber.Ctx) error {
 }
 
 // GetLecturerByUserID
-// (Fungsi ini sudah benar, tidak ada perubahan)
+// GetLecturerByUserID godoc
+// @Summary      Detail Dosen by ID
+// @Description  Melihat detail data dosen beserta info user-nya berdasarkan User ID
+// @Tags         Lecturers
+// @Security     BearerAuth
+// @Produce      json
+// @Param        id   path      string  true  "User ID (UUID)"
+// @Success      200  {object}  fiber.Map
+// @Failure      400  {object}  fiber.Map
+// @Failure      404  {object}  fiber.Map
+// @Router       /lecturers/{id} [get]
 func GetLecturerByUserID(c *fiber.Ctx) error {
 	userID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -59,6 +78,17 @@ func GetLecturerByUserID(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"success": true, "data": response})
 }
 
+// GetLecturerAdvisees godoc
+// @Summary      Lihat Mahasiswa Bimbingan
+// @Description  Melihat daftar mahasiswa yang dibimbing oleh dosen tertentu
+// @Tags         Lecturers
+// @Security     BearerAuth
+// @Produce      json
+// @Param        id   path      string  true  "Lecturer/User UUID"
+// @Success      200  {object}  fiber.Map{data=[]model.Student}
+// @Failure      400  {object}  fiber.Map
+// @Failure      404  {object}  fiber.Map
+// @Router       /lecturers/{id}/advisees [get]
 func GetLecturerAdvisees(c *fiber.Ctx) error {
 	lecturerID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -92,6 +122,18 @@ func GetLecturerAdvisees(c *fiber.Ctx) error {
 }
 
 // CreateLecturer
+// CreateLecturer godoc
+// @Summary      Tambah Data Dosen
+// @Description  Menambahkan profil dosen ke user yang sudah ada (Admin)
+// @Tags         Lecturers
+// @Security     BearerAuth
+// @Accept       json
+// @Produce      json
+// @Param        request body model.CreateLecturerRequest true "Data Dosen"
+// @Success      201  {object}  fiber.Map{data=model.Lecturer}
+// @Failure      400  {object}  fiber.Map
+// @Failure      409  {object}  fiber.Map
+// @Router       /lecturers [post]
 func CreateLecturer(c *fiber.Ctx) error {
 	var req model.CreateLecturerRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -132,6 +174,19 @@ func CreateLecturer(c *fiber.Ctx) error {
 }
 
 // UpdateLecturer
+// UpdateLecturer godoc
+// @Summary      Update Profil Dosen
+// @Description  Mengubah data NIP/NIDN atau Departemen Dosen
+// @Tags         Lecturers
+// @Security     BearerAuth
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "User ID (UUID)"
+// @Param        request body model.UpdateLecturerRequest true "Data Update"
+// @Success      200  {object}  fiber.Map{data=model.Lecturer}
+// @Failure      400  {object}  fiber.Map
+// @Failure      404  {object}  fiber.Map
+// @Router       /lecturers/{id} [put]
 func UpdateLecturer(c *fiber.Ctx) error {
 	userID, err := uuid.Parse(c.Params("id"))
 	if err != nil {

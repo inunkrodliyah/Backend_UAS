@@ -9,6 +9,17 @@ import (
 	"github.com/google/uuid"
 )
 
+// GetPermissionsByRoleID godoc
+// @Summary      Lihat Permission milik Role
+// @Description  Mendapatkan daftar permission yang dimiliki oleh Role tertentu
+// @Tags         RolePermissions
+// @Security     BearerAuth
+// @Produce      json
+// @Param        role_id   path      string  true  "Role ID (UUID)"
+// @Success      200  {object}  fiber.Map{data=[]model.Permission}
+// @Failure      400  {object}  fiber.Map
+// @Failure      500  {object}  fiber.Map
+// @Router       /roles/{role_id}/permissions [get]
 func GetPermissionsByRoleID(c *fiber.Ctx) error {
 	roleID, err := uuid.Parse(c.Params("role_id"))
 	if err != nil {
@@ -24,6 +35,18 @@ func GetPermissionsByRoleID(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"success": true, "data": permissions})
 }
 
+// AssignPermissionToRole godoc
+// @Summary      Assign Permission ke Role
+// @Description  Menambahkan hak akses (permission) ke sebuah role
+// @Tags         RolePermissions
+// @Security     BearerAuth
+// @Accept       json
+// @Produce      json
+// @Param        request body model.AssignPermissionRequest true "Data Assign"
+// @Success      201  {object}  fiber.Map
+// @Failure      400  {object}  fiber.Map
+// @Failure      500  {object}  fiber.Map
+// @Router       /roles/permissions [post]
 func AssignPermissionToRole(c *fiber.Ctx) error {
 	var req model.AssignPermissionRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -44,6 +67,18 @@ func AssignPermissionToRole(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"success": true, "message": "Permission berhasil di-assign"})
 }
 
+// RevokePermissionFromRole godoc
+// @Summary      Revoke Permission dari Role
+// @Description  Mencabut hak akses (permission) dari sebuah role
+// @Tags         RolePermissions
+// @Security     BearerAuth
+// @Produce      json
+// @Param        role_id        path      string  true  "Role ID (UUID)"
+// @Param        permission_id  path      string  true  "Permission ID (UUID)"
+// @Success      200  {object}  fiber.Map
+// @Failure      400  {object}  fiber.Map
+// @Failure      500  {object}  fiber.Map
+// @Router       /roles/{role_id}/permissions/{permission_id} [delete]
 func RevokePermissionFromRole(c *fiber.Ctx) error {
 	roleID, err := uuid.Parse(c.Params("role_id"))
 	if err != nil {

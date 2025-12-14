@@ -10,6 +10,15 @@ import (
 	"github.com/google/uuid"
 )
 
+// GetAllPermissions godoc
+// @Summary      Lihat Semua Permission
+// @Description  Mendapatkan daftar semua hak akses (permission) yang tersedia di sistem
+// @Tags         Permissions
+// @Security     BearerAuth
+// @Produce      json
+// @Success      200  {object}  fiber.Map{data=[]model.Permission}
+// @Failure      500  {object}  fiber.Map
+// @Router       /permissions [get]
 func GetAllPermissions(c *fiber.Ctx) error {
 	permissions, err := repository.GetAllPermissions(database.DB)
 	if err != nil {
@@ -20,6 +29,17 @@ func GetAllPermissions(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"success": true, "data": permissions})
 }
 
+// GetPermissionByID godoc
+// @Summary      Detail Permission
+// @Description  Mendapatkan detail permission berdasarkan ID
+// @Tags         Permissions
+// @Security     BearerAuth
+// @Produce      json
+// @Param        id   path      string  true  "Permission ID (UUID)"
+// @Success      200  {object}  fiber.Map{data=model.Permission}
+// @Failure      400  {object}  fiber.Map
+// @Failure      404  {object}  fiber.Map
+// @Router       /permissions/{id} [get]
 func GetPermissionByID(c *fiber.Ctx) error {
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -33,6 +53,19 @@ func GetPermissionByID(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"success": true, "data": permission})
 }
 
+// CreatePermission godoc
+// @Summary      Buat Permission Baru
+// @Description  Menambahkan permission baru (Resource + Action) ke dalam sistem
+// @Tags         Permissions
+// @Security     BearerAuth
+// @Accept       json
+// @Produce      json
+// @Param        request body model.CreatePermissionRequest true "Data Permission"
+// @Success      201  {object}  fiber.Map{data=model.Permission}
+// @Failure      400  {object}  fiber.Map
+// @Failure      409  {object}  fiber.Map
+// @Failure      500  {object}  fiber.Map
+// @Router       /permissions [post]
 func CreatePermission(c *fiber.Ctx) error {
 	// 1. Menggunakan struct request yang baru
 	var req model.CreatePermissionRequest
@@ -71,6 +104,21 @@ func CreatePermission(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"success": true, "message": "Permission berhasil ditambahkan", "data": permission})
 }
 
+// UpdatePermission godoc
+// @Summary      Update Permission
+// @Description  Mengubah data permission (Name, Resource, Action, Description)
+// @Tags         Permissions
+// @Security     BearerAuth
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Permission ID (UUID)"
+// @Param        request body model.UpdatePermissionRequest true "Data Update"
+// @Success      200  {object}  fiber.Map{data=model.Permission}
+// @Failure      400  {object}  fiber.Map
+// @Failure      404  {object}  fiber.Map
+// @Failure      409  {object}  fiber.Map
+// @Failure      500  {object}  fiber.Map
+// @Router       /permissions/{id} [put]
 func UpdatePermission(c *fiber.Ctx) error {
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -118,6 +166,17 @@ func UpdatePermission(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"success": true, "message": "Permission berhasil diupdate", "data": permission})
 }
 
+// DeletePermission godoc
+// @Summary      Hapus Permission
+// @Description  Menghapus permission dari sistem berdasarkan ID
+// @Tags         Permissions
+// @Security     BearerAuth
+// @Produce      json
+// @Param        id   path      string  true  "Permission ID (UUID)"
+// @Success      200  {object}  fiber.Map
+// @Failure      400  {object}  fiber.Map
+// @Failure      500  {object}  fiber.Map
+// @Router       /permissions/{id} [delete]
 func DeletePermission(c *fiber.Ctx) error {
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {

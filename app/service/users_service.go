@@ -11,6 +11,15 @@ import (
 )
 
 // GET /api/v1/users
+// GetAllUsers godoc
+// @Summary      Lihat Semua User
+// @Description  Admin melihat daftar semua user yang terdaftar
+// @Tags         Users
+// @Security     BearerAuth
+// @Produce      json
+// @Success      200  {object}  fiber.Map{data=[]model.User}
+// @Failure      500  {object}  fiber.Map
+// @Router       /users [get]
 func GetAllUsers(c *fiber.Ctx) error {
 	users, err := repository.GetAllUsers(database.DB)
 	if err != nil {
@@ -20,6 +29,16 @@ func GetAllUsers(c *fiber.Ctx) error {
 }
 
 // GET /api/v1/users/:id
+// GetUserByID godoc
+// @Summary      Lihat Detail User
+// @Description  Melihat detail data user berdasarkan ID
+// @Tags         Users
+// @Security     BearerAuth
+// @Produce      json
+// @Param        id   path      string  true  "User ID (UUID)"
+// @Success      200  {object}  fiber.Map{data=model.User}
+// @Failure      404  {object}  fiber.Map
+// @Router       /users/{id} [get]
 func GetUserByID(c *fiber.Ctx) error {
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -33,6 +52,17 @@ func GetUserByID(c *fiber.Ctx) error {
 }
 
 // POST /api/v1/users
+// CreateUser godoc
+// @Summary      Buat User Baru
+// @Description  Admin membuat user manual (Mahasiswa/Dosen)
+// @Tags         Users
+// @Security     BearerAuth
+// @Accept       json
+// @Produce      json
+// @Param        request body model.CreateUserRequest true "Data User"
+// @Success      201  {object}  fiber.Map{data=model.User}
+// @Failure      400  {object}  fiber.Map
+// @Router       /users [post]
 func CreateUser(c *fiber.Ctx) error {
 	var req model.CreateUserRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -59,7 +89,18 @@ func CreateUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"success": true, "data": user})
 }
 
-// PUT /api/v1/users/:id
+// @Summary      Update Profil User
+// @Description  Mengubah data profil user (Username, Email, Nama, dll)
+// @Tags         Users
+// @Security     BearerAuth
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "User ID (UUID)"
+// @Param        request body model.UpdateUserRequest true "Data Update"
+// @Success      200  {object}  fiber.Map{data=model.User}
+// @Failure      400  {object}  fiber.Map
+// @Failure      404  {object}  fiber.Map
+// @Router       /users/{id} [put]
 func UpdateUser(c *fiber.Ctx) error {
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -88,6 +129,16 @@ func UpdateUser(c *fiber.Ctx) error {
 }
 
 // DELETE /api/v1/users/:id
+// DeleteUser godoc
+// @Summary      Hapus User
+// @Description  Menghapus user dari sistem berdasarkan ID
+// @Tags         Users
+// @Security     BearerAuth
+// @Produce      json
+// @Param        id   path      string  true  "User ID (UUID)"
+// @Success      200  {object}  fiber.Map
+// @Failure      404  {object}  fiber.Map
+// @Router       /users/{id} [delete]
 func DeleteUser(c *fiber.Ctx) error {
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -100,6 +151,18 @@ func DeleteUser(c *fiber.Ctx) error {
 }
 
 // PUT /api/v1/users/:id/role
+// UpdateUserRole godoc
+// @Summary      Ubah Role User
+// @Description  Admin mengubah hak akses (role) user tertentu
+// @Tags         Users
+// @Security     BearerAuth
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "User ID (UUID)"
+// @Param        request body model.UpdateUserRoleRequest true "Role ID Baru"
+// @Success      200  {object}  fiber.Map
+// @Failure      400  {object}  fiber.Map
+// @Router       /users/{id}/role [put]
 func UpdateUserRole(c *fiber.Ctx) error {
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {
