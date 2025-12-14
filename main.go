@@ -35,7 +35,7 @@ func main() {
 	// 2. Get port from env or default
 	port := os.Getenv("APP_PORT")
 	if port == "" {
-		port = "3000" // Default jika APP_PORT tidak disetel
+		port = "1063" // Default jika APP_PORT tidak disetel
 	}
 
 	// 3. Buat alamat 'Listen' yang valid (cth: ":1063")
