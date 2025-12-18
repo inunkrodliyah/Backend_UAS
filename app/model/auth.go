@@ -10,8 +10,9 @@ type LoginRequest struct {
 
 // Request untuk Refresh Token
 type RefreshTokenRequest struct {
-	RefreshToken string `json:"refresh_token"`
+	RefreshToken string `json:"refresh_token" example:"a3f5d9c2-8e34-4f90-9d21-1cfa9f4b8e71"`
 }
+
 
 // --- STRUCTURE RESPONSE (SESUAI FR-001 & SRS) ---
 
